@@ -440,12 +440,23 @@ The 'size' attribute is required for array parameters and not allowed for
 others. The length of the `size` array indicates the number of dimensions, and each element in the `size` array indicates the number of elements in that
 dimension. For example, the size attribute for a 1-D array would be a 1-D JSON array of length one, with the one element in the JSON array indicating the number of elements in the data array. For a spectrum, this number of elements is the number of wavelengths or energies in the spectrum. Thus `"size": [9]` refers to a data parameter that is a 1-D array of length 9, and in the `csv` and `binary` output formats, there will be 9 columns for this data parameter. In the `json` output for this data parameter, each record will contain a JSON array of 9 elements (enclosed in brackets `[ ]`).
 
-For arrays of size 2-D or higher, the column orderings need to be specified for the `csv` and `binary` output formats, because for both of these formats, the array needs to be "unrolled" into individual columns. The mapping of 2-D array element to unrolled column index is done so that the later array elements change the fastest. This is illustrated with the following example. Given a 2-D array of `"size":[2,5]`, the 5 item index changes the most quickly. Items in each record will be ordered like this `[0,0] [0,1], [0,2] [0,3] [0,4]   [1,0,] [1,1] [1,2] [1,3] [1,4]` and the ordering is similarly done for higher dimensions.
-
-No unrolling is needed for JSON arrays because JSON syntax can represent arrays of any dimension. The following example shows one record of data with a time parameter and a single data parameter `"size":[2,5]` (of type double):
+For arrays of size 2-D or higher, the column orderings need to be specified for the `csv` and `binary` output formats, because for both of these formats, the array needs to be "unrolled" into individual columns. The mapping of 2-D array element to an unrolled column index is done so that the later array elements change the fastest. For example, given a 2-D array of `"size": [2,5]`, the 5 item index changes most quickly. Items in each record will be ordered `[0,0] [0,1], [0,2] [0,3] [0,4] [1,0] [1,1] [1,2] [1,3] [1,4]` and the ordering is similarly done for higher dimensions. For example, a parameter with `"size": [2, 5]` that is the matrix
 
 ```
-["2017-11-13T12:34:56.789Z", [ [0.0, 1.1, 2.2, 3.3, 4.4] [5.0,6.0,7.0,8.0,9.0] ] ]
+0.0, 1.1, 2.2, 3.3, 4.4
+5.0, 6.0, 7.0, 8.0, 9.0 
+```
+
+at the time `2017-11-13T12:34:56.789Z` would be represented in the CSV response as
+
+```json
+2017-11-13T12:34:56.789Z, 0.0, 1.1, 2.2, 3.3, 4.4, 5.0, 6.0, 7.0, 8.0, 9.0 
+```
+
+In the JSON response, it would be represented as
+
+```
+["2017-11-13T12:34:56.789Z", [ [0.0, 1.1, 2.2, 3.3, 4.4] [5.0, 6.0, 7.0, 8.0, 9.0] ] ]
 ```
 
 ### 3.6.6 `fill` Details
